@@ -13,7 +13,7 @@ set_property(
 
 set_target_properties(winreg PROPERTIES
   IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "CXX"
-  IMPORTED_LOCATION_DEBUG "${WINREG_ROOT}/build/Release/clip.lib"
+  IMPORTED_LOCATION_DEBUG "${WINREG_ROOT}/WinReg.lib"
 )
 
 set_property(
