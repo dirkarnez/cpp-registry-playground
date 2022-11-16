@@ -1,9 +1,13 @@
+#define  _WIN32_WINNT  0x0600
+#include <Windows.h>
 
+#define HKEY_CURRENT_USER_LOCAL_SETTINGS ((HKEY) (ULONG_PTR)((LONG)0x80000007))
 #include "WinReg.hpp"   // Module to test
 
 #include <exception>
 #include <iostream>
 #include <string>
+#include <optional>
 #include <vector>
 #include <algorithm>    // std::copy_if, std::distance
 
@@ -82,5 +86,6 @@ int main()
         return kExitError;
     }
 
+    std::cin.get();
     return kExitOk;
 }
