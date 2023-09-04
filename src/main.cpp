@@ -11,6 +11,10 @@
 #include <vector>
 #include <algorithm>    // std::copy_if, std::distance
 
+#include <iostream>
+#include <chrono>
+#include <thread>
+
 using std::endl;
 using std::optional;
 using std::pair;
@@ -63,10 +67,13 @@ int main()
 
     try
     {
+		
         wcout << L"=========================================\n";
         wcout << L"*** Testing Giovanni Dicanio's WinReg ***\n";
         wcout << L"=========================================\n\n";
-
+		
+		std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+		
         Test();
 
         wcout << L"All right!! :)" << endl;
