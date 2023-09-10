@@ -1,4 +1,4 @@
-ame: cpp-cmake-mingw-prebuilt-release-actions-workflow
+name: cpp-cmake-mingw-prebuilt-release-actions-workflow
 on:
   push:
     # Sequence of patterns matched against refs/tags
