@@ -1,0 +1,72 @@
+ame: cpp-cmake-mingw-prebuilt-release-actions-workflow
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+      - 'c*'
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        compiler:
+        - {
+            name: "x86_64-8.1.0-release-posix-seh-rt_v6-rev0",
+            url: "https://github.com/dirkarnez/cpp-tools/raw/main/x86_64-8.1.0-release-posix-seh-rt_v6-rev0.7z"
+          }
+          
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: download compiler
+        shell: cmd
+        run: |
+          curl ${{ matrix.compiler.url }} -L --output compiler &&^
+          7z.exe x compiler
+          
+      - name: curl PortableGit-2.38.1-64-bit.7z.exe
+        shell: cmd
+        run: curl https://github.com/git-for-windows/git/releases/download/v2.38.1.windows.1/PortableGit-2.38.1-64-bit.7z.exe -L --output PortableGit-2.38.1-64-bit.7z.exe && dir && 7z.exe x PortableGit-2.38.1-64-bit.7z.exe -o"PortableGit-2.38.1-64-bit"
+      
+      - name: curl cmake-3.24.0-windows-x86_64.zip
+        shell: cmd
+        run: curl https://github.com/Kitware/CMake/releases/download/v3.24.0/cmake-3.24.0-windows-x86_64.zip -L --output cmake-3.24.0-windows-x86_64.zip && dir && 7z.exe x cmake-3.24.0-windows-x86_64.zip
+
+      - shell: cmd
+        run: |
+          curl https://github.com/dirkarnez/WinReg-prebuilt/releases/download/v6.1.0/WinReg-v6.1.0-mingw64-x86_64-8.1.0-release-posix-seh-rt_v6-rev0.zip -L -O &&^
+          7z x WinReg-v6.1.0-mingw64-x86_64-8.1.0-release-posix-seh-rt_v6-rev0.zip -o"WinReg-v6.1.0-mingw64-x86_64-8.1.0-release-posix-seh-rt_v6-rev0"
+        
+      - name: set PATH, check mingw version, cmake generate, build and install
+        shell: cmd
+        run: |
+            set PATH=^
+            ${{ github.workspace }}\mingw64;^
+            ${{ github.workspace }}\mingw64\bin;^
+            ${{ github.workspace }}\cmake-3.24.0-windows-x86_64\bin;
+            set CD_LINUX=%CD:\=/%
+            gcc --version &&^
+            cmake.exe -G"MinGW Makefiles" ^
+            -DCMAKE_BUILD_TYPE=Release ^
+            -DBUILD_SHARED_LIBS=OFF ^
+            -DWinReg_DIR="%CD_LINUX%/WinReg-v6.1.0-mingw64-x86_64-8.1.0-release-posix-seh-rt_v6-rev0" ^
+            -DCMAKE_INSTALL_PREFIX="cmake-build/${{ env.cmakeInstallationPath }}" -B./cmake-build &&^
+            cd cmake-build && cmake --build . && cmake --install . 
+            
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          type: 'zip'
+          path: |
+            cpp-registry-playground.exe
+          directory: "cmake-build"
+          filename: "${{ github.event.repository.name }}-${{ github.ref_name }}-${{ matrix.compiler.name }}.zip"
+        
+      - name: Release prebuilt
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "cmake-build/${{ github.event.repository.name }}-${{ github.ref_name }}-${{ matrix.compiler.name }}.zip"
+          allowUpdates: true
+          token: ${{ secrets.GITHUB_TOKEN }}
