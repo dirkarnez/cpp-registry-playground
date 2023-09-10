@@ -51,7 +51,7 @@ jobs:
             cmake.exe -G"MinGW Makefiles" ^
             -DCMAKE_BUILD_TYPE=Release ^
             -DBUILD_SHARED_LIBS=OFF ^
-            -DWinReg_DIR="%CD_LINUX%/WinReg-v6.1.0-mingw64-x86_64-8.1.0-release-posix-seh-rt_v6-rev0" ^
+            -DWinReg_DIR="%CD_LINUX%/WinReg-v6.1.0-mingw64-x86_64-8.1.0-release-posix-seh-rt_v6-rev0/lib/cmake/WinReg" ^
             -DCMAKE_INSTALL_PREFIX="cmake-build/${{ env.cmakeInstallationPath }}" -B./cmake-build &&^
             cd cmake-build && cmake --build . && cmake --install . 
             
